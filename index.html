@@ -160,6 +160,7 @@
         .message-page h1 {
             font-size: 36px;
             margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
         .message-content {
@@ -167,6 +168,11 @@
             font-size: 18px;
             line-height: 1.8;
             margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            background: linear-gradient(to bottom, #ffffff 0%, #fafafa 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         .uploaded-photo {
@@ -175,6 +181,13 @@
             border-radius: 15px;
             margin: 30px auto;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 3px solid #f0f0f0;
+        }
+
+        .decorative-hearts {
+            font-size: 20px;
+            margin: 15px 0;
+            opacity: 0.7;
         }
 
         .loading {
@@ -373,11 +386,74 @@
         .slide {
             display: none;
             width: 100%;
-            animation: slideZoom 0.5s ease-in-out;
         }
 
         .slide.active-slide {
             display: block;
+        }
+
+        /* Old PowerPoint style transitions */
+        .slide.transition-dissolve {
+            animation: dissolve 1s ease-in-out;
+        }
+
+        .slide.transition-wipe {
+            animation: wipe 1s ease-in-out;
+        }
+
+        .slide.transition-checkerboard {
+            animation: checkerboard 1s steps(8);
+        }
+
+        .slide.transition-box {
+            animation: boxIn 1s ease-in-out;
+        }
+
+        .slide.transition-split {
+            animation: splitVertical 1s ease-in-out;
+        }
+
+        @keyframes dissolve {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes wipe {
+            0% { 
+                clip-path: inset(0 100% 0 0);
+            }
+            100% { 
+                clip-path: inset(0 0 0 0);
+            }
+        }
+
+        @keyframes checkerboard {
+            0% { 
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            100% { 
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes boxIn {
+            0% { 
+                clip-path: inset(50% 50% 50% 50%);
+            }
+            100% { 
+                clip-path: inset(0 0 0 0);
+            }
+        }
+
+        @keyframes splitVertical {
+            0% { 
+                clip-path: polygon(50% 0, 50% 0, 50% 100%, 50% 100%);
+            }
+            100% { 
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            }
         }
 
         .slide img {
@@ -397,17 +473,6 @@
             text-align: center;
             font-size: 24px;
             font-weight: bold;
-        }
-
-        @keyframes slideZoom {
-            0% {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
         }
 
         .slide-counter {
@@ -533,6 +598,8 @@
         <!-- Message Page -->
         <div id="message-page" class="message-page">
             <h1>Happy Valentine's Day!!!!!</h1>
+            
+            <div class="decorative-hearts">🩷 💘 ❤️ 💝 💟</div>
             
             <img id="displayed-photo" class="uploaded-photo" alt="Your photo">
             
@@ -692,7 +759,7 @@
             overlay.innerHTML = '';
             overlay.classList.add('active');
             
-            const heartEmojis = ['💕', '💖', '💗', '💓', '💝', '❤️'];
+            const heartEmojis = ['🩷', '💘', '❤️', '💝', '💟'];
             
             // Create 20 hearts
             for (let i = 0; i < 20; i++) {
@@ -722,6 +789,12 @@
             document.getElementById('loading').style.display = 'block';
             this.disabled = true;
 
+            // Start audio immediately when verify is clicked
+            const audio = document.getElementById('valentine-audio');
+            audio.play().catch(err => {
+                console.log('Auto-play prevented by browser. User will need to click play.');
+            });
+
             // Simulate verification (2 seconds)
             setTimeout(() => {
                 document.getElementById('captcha-page').style.display = 'none';
@@ -733,14 +806,6 @@
                 setTimeout(() => {
                     document.getElementById('message-page').style.display = 'block';
                     document.getElementById('displayed-photo').src = valentinePhoto;
-                    
-                    // Auto-play audio (with a small delay to ensure it works)
-                    setTimeout(() => {
-                        const audio = document.getElementById('valentine-audio');
-                        audio.play().catch(err => {
-                            console.log('Auto-play prevented by browser. User will need to click play.');
-                        });
-                    }, 300);
                 }, 500);
             }, 2000);
         });
@@ -760,8 +825,15 @@
                 currentSlide = index;
             }
 
-            slides.forEach(slide => slide.classList.remove('active-slide'));
-            slides[currentSlide].classList.add('active-slide');
+            // Random PowerPoint-style transitions
+            const transitions = ['transition-dissolve', 'transition-wipe', 'transition-checkerboard', 'transition-box', 'transition-split'];
+            const randomTransition = transitions[Math.floor(Math.random() * transitions.length)];
+
+            slides.forEach(slide => {
+                slide.classList.remove('active-slide', ...transitions);
+            });
+            
+            slides[currentSlide].classList.add('active-slide', randomTransition);
 
             // Update counter
             document.getElementById('slide-counter').textContent = `${currentSlide + 1} / 20`;
