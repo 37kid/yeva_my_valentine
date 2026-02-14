@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Verification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border: 1px solid #d3d3d3;
+            border-radius: 3px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+            font-weight: normal;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .captcha-box {
+            border: 1px solid #d3d3d3;
+            border-radius: 3px;
+            padding: 15px;
+            margin: 20px 0;
+            background: #f9f9f9;
+        }
+
+        .captcha-question {
+            color: #000;
+            font-size: 16px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3px;
+            margin: 15px 0;
+            background: #f9f9f9;
+        }
+
+        .image-option {
+            aspect-ratio: 1;
+            border: 2px solid transparent;
+            border-radius: 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            overflow: hidden;
+            position: relative;
+            background: #fff;
+        }
+
+        .image-option img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-option:hover {
+            opacity: 0.8;
+        }
+
+        .image-option.selected {
+            border-color: #4285f4;
+        }
+
+        .image-option.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #4285f4;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .verify-btn {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 2px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 15px;
+        }
+
+        .verify-btn:hover:not(:disabled) {
+            background: #3367d6;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .verify-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .message-page {
+            display: none;
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .message-page h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .message-content {
+            color: #555;
+            font-size: 18px;
+            line-height: 1.8;
+            margin: 30px 0;
+        }
+
+        .uploaded-photo {
+            max-width: 300px;
+            width: 100%;
+            border-radius: 15px;
+            margin: 30px auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4285f4;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .placeholder-img {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e8e8e8;
+            color: #999;
+            font-size: 40px;
+        }
+
+        .error-message {
+            color: #d93025;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- CAPTCHA Page -->
+        <div id="captcha-page">
+            <h1>Select your Valentine</h1>
+            <p class="subtitle">Click verify once you have selected all matching images</p>
+
+            <div class="captcha-box">
+                <div class="captcha-question">Select all squares with your Valentine</div>
+                <div class="image-grid" id="image-grid">
+                    <div class="image-option" data-index="0">
+                        <div class="placeholder-img">🌹</div>
+                    </div>
+                    <div class="image-option" data-index="1">
+                        <div class="placeholder-img">💐</div>
+                    </div>
+                    <div class="image-option" data-index="2">
+                        <div class="placeholder-img">🌺</div>
+                    </div>
+                    <div class="image-option" data-index="3">
+                        <div class="placeholder-img">🌸</div>
+                    </div>
+                    <div class="image-option" data-index="4">
+                        <div class="placeholder-img">💝</div>
+                    </div>
+                    <div class="image-option" data-index="5">
+                        <div class="placeholder-img">🌷</div>
+                    </div>
+                    <div class="image-option" data-index="6">
+                        <div class="placeholder-img">🌻</div>
+                    </div>
+                    <div class="image-option" data-index="7">
+                        <div class="placeholder-img">🏵️</div>
+                    </div>
+                    <div class="image-option" data-index="8">
+                        <div class="placeholder-img">💐</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <p style="margin-top: 10px; color: #666;">Verifying...</p>
+            </div>
+
+            <button class="verify-btn" id="verify-btn">Verify</button>
+        </div>
+
+        <!-- Message Page -->
+        <div id="message-page" class="message-page">
+            <h1>Happy Valentine's Day!!!!!</h1>
+            
+            <img id="displayed-photo" class="uploaded-photo" alt="Your photo">
+            
+            <div class="message-content">
+                <p><strong>To my dearest Valentine</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Your Valentine's photo (will appear in 3-4 random squares)
+        const valentinePhoto = 'valentine.jpg';
+        
+        // Other photos to fill the remaining squares (you can add more)
+        const otherPhotos = [
+            'photo1.jpg',
+            'photo2.jpg',
+            'photo3.jpg',
+            'photo4.jpg',
+            'photo5.jpg',
+            'photo6.jpg'
+        ];
+        
+        let correctSquares = [];
+
+        // Setup captcha on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            setupCaptcha();
+        });
+
+        function setupCaptcha() {
+            const grid = document.getElementById('image-grid');
+            const squares = grid.querySelectorAll('.image-option');
+            
+            // Randomly select 3-4 squares to show the valentine photo
+            const numCorrect = Math.floor(Math.random() * 2) + 3; // 3 or 4
+            correctSquares = [];
+            
+            const indices = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+            for (let i = indices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [indices[i], indices[j]] = [indices[j], indices[i]];
+            }
+            
+            correctSquares = indices.slice(0, numCorrect);
+            
+            // Shuffle other photos array for variety
+            const shuffledOthers = [...otherPhotos].sort(() => Math.random() - 0.5);
+            let otherPhotoIndex = 0;
+            
+            squares.forEach((square, index) => {
+                square.innerHTML = '';
+                if (correctSquares.includes(index)) {
+                    const img = document.createElement('img');
+                    img.src = valentinePhoto;
+                    square.appendChild(img);
+                } else {
+                    const img = document.createElement('img');
+                    img.src = shuffledOthers[otherPhotoIndex % shuffledOthers.length];
+                    square.appendChild(img);
+                    otherPhotoIndex++;
+                }
+            });
+        }
+
+        // Handle square selection
+        document.getElementById('image-grid').addEventListener('click', function(e) {
+            const square = e.target.closest('.image-option');
+            if (square) {
+                square.classList.toggle('selected');
+            }
+        });
+
+        // Handle verification
+        document.getElementById('verify-btn').addEventListener('click', function() {
+            const selectedSquares = document.querySelectorAll('.image-option.selected');
+            const selectedIndices = Array.from(selectedSquares).map(sq => 
+                parseInt(sq.getAttribute('data-index'))
+            );
+
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            this.disabled = true;
+
+            // Simulate verification (always succeed after 2 seconds)
+            setTimeout(() => {
+                document.getElementById('captcha-page').style.display = 'none';
+                document.getElementById('message-page').style.display = 'block';
+                document.getElementById('displayed-photo').src = valentinePhoto;
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
