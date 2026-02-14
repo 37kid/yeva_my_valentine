@@ -277,12 +277,14 @@
     </div>
 
     <script>
-        // Your Valentine's photo (will appear in 3-4 random squares)
+        // Photo for the final message page
         const valentinePhoto = 'valentine.jpg';
         
-        // Other photos to fill the remaining squares (you can add more)
+        // Photo to use in the CAPTCHA (the "correct" one to select)
+        const captchaPhoto = 'photo1.jpg';
+        
+        // Other photos to fill the remaining squares
         const otherPhotos = [
-            'photo1.jpg',
             'photo2.jpg',
             'photo3.jpg',
             'photo4.jpg',
@@ -304,7 +306,7 @@
             const grid = document.getElementById('image-grid');
             const squares = grid.querySelectorAll('.image-option');
             
-            // Randomly select 3-4 squares to show the valentine photo
+            // Randomly select 3-4 squares to show the captcha photo
             const numCorrect = Math.floor(Math.random() * 2) + 3; // 3 or 4
             correctSquares = [];
             
@@ -324,7 +326,7 @@
                 square.innerHTML = '';
                 if (correctSquares.includes(index)) {
                     const img = document.createElement('img');
-                    img.src = valentinePhoto;
+                    img.src = captchaPhoto;
                     square.appendChild(img);
                 } else {
                     const img = document.createElement('img');
