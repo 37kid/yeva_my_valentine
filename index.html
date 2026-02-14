@@ -648,19 +648,27 @@
             border-radius: 5px;
             font-size: 18px;
             z-index: 10;
+            display: none;
         }
 
         .photos-link {
             display: inline-block;
-            margin-top: 20px;
+            margin-top: 30px;
             color: #4285f4;
-            text-decoration: underline;
+            text-decoration: none;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 28px;
+            font-weight: bold;
+            padding: 15px 40px;
+            border: 3px solid #4285f4;
+            border-radius: 10px;
+            transition: all 0.3s ease;
         }
 
         .photos-link:hover {
-            color: #3367d6;
+            background: #4285f4;
+            color: white;
+            transform: scale(1.05);
         }
 
         .back-link {
@@ -686,6 +694,7 @@
         .audio-player {
             margin: 20px auto;
             max-width: 400px;
+            display: none;
         }
 
         .audio-player audio {
@@ -792,7 +801,7 @@
                 <p><strong>To my dearest Valentine</strong></p>
             </div>
 
-            <div class="photos-link" id="show-slideshow">Some photos of us</div>
+            <div class="photos-link" id="show-slideshow">click here</div>
 
             <!-- Slideshow -->
             <div class="slideshow-container" id="slideshow">
@@ -1035,7 +1044,12 @@
         function startSlideshow() {
             // Auto-advance every 2 seconds (adjust for more/less cringe)
             slideshowInterval = setInterval(() => {
-                showSlide(currentSlide + 1);
+                if (currentSlide < 19) {
+                    showSlide(currentSlide + 1);
+                } else {
+                    // Stop at the last slide
+                    stopSlideshow();
+                }
             }, 2000);
         }
 
