@@ -750,6 +750,36 @@
             }
         }
 
+        /* Falling hearts for last slide */
+        .falling-hearts-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 5;
+        }
+
+        .falling-heart {
+            position: absolute;
+            font-size: 30px;
+            animation: fall linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes fall {
+            0% {
+                top: -10%;
+                opacity: 1;
+            }
+            100% {
+                top: 110%;
+                opacity: 0.3;
+            }
+        }
+
         .slide img {
             width: 100%;
             height: auto;
@@ -937,7 +967,8 @@
             </div>
             
             <div class="message-content">
-                <p><strong>To my dearest Valentine 2026</strong></p>
+                <p><strong>To my dearest Valentine</strong></p>
+                <p><strong>Yeva</strong></p>
             </div>
 
             <div class="photos-link" id="show-slideshow">click here 😎</div>
@@ -1004,6 +1035,7 @@
                 </div>
                 <div class="slide">
                     <img src="slide20.JPG" alt="Photo 20">
+                    <div class="falling-hearts-container" id="falling-hearts"></div>
                     <div class="slide-text-overlay">
                         Thank you for being my Valentine!!! &lt;33
                     </div>
@@ -1185,12 +1217,41 @@
             const backButton = document.getElementById('back-to-message');
             if (currentSlide === 19) {
                 backButton.classList.add('show');
+                // Start falling hearts on last slide
+                startFallingHearts();
             } else {
                 backButton.classList.remove('show');
             }
 
             // Update counter
             document.getElementById('slide-counter').textContent = `${currentSlide + 1} / 20`;
+        }
+
+        // Falling hearts effect
+        function startFallingHearts() {
+            const container = document.getElementById('falling-hearts');
+            if (!container) return;
+            
+            const heartEmojis = ['🩷', '💘', '❤️', '💝', '💟'];
+            
+            // Create 15 falling hearts with random positions and speeds
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'falling-heart';
+                heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+                
+                // Random horizontal position
+                heart.style.left = Math.random() * 100 + '%';
+                
+                // Random animation duration (3-7 seconds)
+                const duration = 3 + Math.random() * 4;
+                heart.style.animationDuration = duration + 's';
+                
+                // Random delay (0-3 seconds)
+                heart.style.animationDelay = Math.random() * 3 + 's';
+                
+                container.appendChild(heart);
+            }
         }
 
         function startSlideshow() {
