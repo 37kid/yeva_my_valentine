@@ -190,6 +190,49 @@
             opacity: 0.7;
         }
 
+        .corner-hearts {
+            position: absolute;
+            font-size: 30px;
+            opacity: 0.6;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .corner-hearts.top-left {
+            top: 10px;
+            left: 10px;
+        }
+
+        .corner-hearts.top-right {
+            top: 10px;
+            right: 10px;
+        }
+
+        .corner-hearts.bottom-left {
+            bottom: 10px;
+            left: 10px;
+        }
+
+        .corner-hearts.bottom-right {
+            bottom: 10px;
+            right: 10px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .floating-hearts {
+            font-size: 25px;
+            margin: 20px 0;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
         .loading {
             display: none;
             margin: 20px 0;
@@ -370,13 +413,13 @@
         /* Slideshow styles */
         .slideshow-container {
             display: none;
-            position: relative;
-            max-width: 600px;
-            margin: 30px auto;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             background: #000;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 10000;
         }
 
         .slideshow-container.active {
@@ -386,31 +429,79 @@
         .slide {
             display: none;
             width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         .slide.active-slide {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Old PowerPoint style transitions */
+        .slide img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Old PowerPoint style transitions - MORE GOOFY! */
         .slide.transition-dissolve {
-            animation: dissolve 1s ease-in-out;
+            animation: dissolve 1.2s ease-in-out;
         }
 
-        .slide.transition-wipe {
-            animation: wipe 1s ease-in-out;
+        .slide.transition-wipe-left {
+            animation: wipeLeft 1s ease-in-out;
+        }
+
+        .slide.transition-wipe-right {
+            animation: wipeRight 1s ease-in-out;
+        }
+
+        .slide.transition-wipe-down {
+            animation: wipeDown 1s ease-in-out;
         }
 
         .slide.transition-checkerboard {
-            animation: checkerboard 1s steps(8);
+            animation: checkerboard 1s steps(10);
         }
 
         .slide.transition-box {
-            animation: boxIn 1s ease-in-out;
+            animation: boxIn 1.2s ease-in-out;
         }
 
-        .slide.transition-split {
+        .slide.transition-split-horizontal {
+            animation: splitHorizontal 1s ease-in-out;
+        }
+
+        .slide.transition-split-vertical {
             animation: splitVertical 1s ease-in-out;
+        }
+
+        .slide.transition-blinds {
+            animation: blinds 1s steps(8);
+        }
+
+        .slide.transition-zoom {
+            animation: zoomBounce 1s ease-out;
+        }
+
+        .slide.transition-rotate {
+            animation: rotateIn 1s ease-in-out;
+        }
+
+        .slide.transition-flip {
+            animation: flip 1s ease-in-out;
+        }
+
+        .slide.transition-diamond {
+            animation: diamondIn 1s ease-in-out;
+        }
+
+        .slide.transition-spiral {
+            animation: spiral 1.2s ease-in-out;
         }
 
         @keyframes dissolve {
@@ -418,41 +509,111 @@
             100% { opacity: 1; }
         }
 
-        @keyframes wipe {
-            0% { 
-                clip-path: inset(0 100% 0 0);
-            }
-            100% { 
-                clip-path: inset(0 0 0 0);
-            }
+        @keyframes wipeLeft {
+            0% { clip-path: inset(0 100% 0 0); }
+            100% { clip-path: inset(0 0 0 0); }
+        }
+
+        @keyframes wipeRight {
+            0% { clip-path: inset(0 0 0 100%); }
+            100% { clip-path: inset(0 0 0 0); }
+        }
+
+        @keyframes wipeDown {
+            0% { clip-path: inset(0 0 100% 0); }
+            100% { clip-path: inset(0 0 0 0); }
         }
 
         @keyframes checkerboard {
             0% { 
                 opacity: 0;
-                transform: scale(0.5);
+                transform: scale(0.5) rotate(5deg);
             }
             100% { 
                 opacity: 1;
-                transform: scale(1);
+                transform: scale(1) rotate(0deg);
             }
         }
 
         @keyframes boxIn {
+            0% { clip-path: inset(50% 50% 50% 50%); }
+            100% { clip-path: inset(0 0 0 0); }
+        }
+
+        @keyframes splitHorizontal {
+            0% { clip-path: polygon(0 50%, 100% 50%, 100% 50%, 0 50%); }
+            100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+        }
+
+        @keyframes splitVertical {
+            0% { clip-path: polygon(50% 0, 50% 0, 50% 100%, 50% 100%); }
+            100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+        }
+
+        @keyframes blinds {
             0% { 
-                clip-path: inset(50% 50% 50% 50%);
+                opacity: 0;
+                clip-path: inset(0 0 0 0);
             }
             100% { 
+                opacity: 1;
                 clip-path: inset(0 0 0 0);
             }
         }
 
-        @keyframes splitVertical {
+        @keyframes zoomBounce {
             0% { 
-                clip-path: polygon(50% 0, 50% 0, 50% 100%, 50% 100%);
+                transform: scale(0.3);
+                opacity: 0;
+            }
+            70% { 
+                transform: scale(1.1);
+            }
+            100% { 
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes rotateIn {
+            0% { 
+                transform: rotate(-180deg) scale(0);
+                opacity: 0;
+            }
+            100% { 
+                transform: rotate(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes flip {
+            0% { 
+                transform: perspective(400px) rotateY(90deg);
+                opacity: 0;
+            }
+            100% { 
+                transform: perspective(400px) rotateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes diamondIn {
+            0% { 
+                clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%);
             }
             100% { 
                 clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            }
+        }
+
+        @keyframes spiral {
+            0% { 
+                transform: rotate(-360deg) scale(0);
+                opacity: 0;
+            }
+            100% { 
+                transform: rotate(0) scale(1);
+                opacity: 1;
             }
         }
 
@@ -464,26 +625,29 @@
 
         .slide-text-overlay {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 100%);
             color: white;
-            padding: 40px 20px 20px;
+            padding: 30px 50px;
             text-align: center;
-            font-size: 24px;
+            font-size: 32px;
             font-weight: bold;
+            border-radius: 10px;
+            min-width: 400px;
         }
 
         .slide-counter {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.7);
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
             color: white;
-            padding: 5px 10px;
+            padding: 10px 20px;
             border-radius: 5px;
-            font-size: 14px;
+            font-size: 18px;
+            z-index: 10;
         }
 
         .photos-link {
@@ -500,16 +664,23 @@
         }
 
         .back-link {
-            display: inline-block;
-            margin-top: 20px;
-            color: #4285f4;
-            text-decoration: underline;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10001;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 16px;
+            border: 2px solid white;
         }
 
         .back-link:hover {
-            color: #3367d6;
+            background: rgba(66, 133, 244, 0.9);
+            border-color: #4285f4;
         }
 
         .audio-player {
@@ -597,11 +768,18 @@
 
         <!-- Message Page -->
         <div id="message-page" class="message-page">
+            <div class="corner-hearts top-left">🩷💘</div>
+            <div class="corner-hearts top-right">❤️💝</div>
+            <div class="corner-hearts bottom-left">💟🩷</div>
+            <div class="corner-hearts bottom-right">💘❤️</div>
+            
             <h1>Happy Valentine's Day!!!!!</h1>
             
             <div class="decorative-hearts">🩷 💘 ❤️ 💝 💟</div>
             
             <img id="displayed-photo" class="uploaded-photo" alt="Your photo">
+            
+            <div class="floating-hearts">💘 🩷 ❤️ 💝 💟 🩷 💘</div>
             
             <div class="audio-player">
                 <audio id="valentine-audio" controls loop>
@@ -825,8 +1003,23 @@
                 currentSlide = index;
             }
 
-            // Random PowerPoint-style transitions
-            const transitions = ['transition-dissolve', 'transition-wipe', 'transition-checkerboard', 'transition-box', 'transition-split'];
+            // MORE GOOFY PowerPoint-style transitions!
+            const transitions = [
+                'transition-dissolve', 
+                'transition-wipe-left', 
+                'transition-wipe-right', 
+                'transition-wipe-down',
+                'transition-checkerboard', 
+                'transition-box', 
+                'transition-split-horizontal',
+                'transition-split-vertical',
+                'transition-blinds',
+                'transition-zoom',
+                'transition-rotate',
+                'transition-flip',
+                'transition-diamond',
+                'transition-spiral'
+            ];
             const randomTransition = transitions[Math.floor(Math.random() * transitions.length)];
 
             slides.forEach(slide => {
