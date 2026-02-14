@@ -249,6 +249,70 @@
             font-size: 14px;
         }
 
+        /* Robot checkbox screen */
+        .robot-check {
+            display: block;
+        }
+
+        .robot-check.hidden {
+            display: none;
+        }
+
+        .checkbox-container {
+            border: 1px solid #d3d3d3;
+            border-radius: 3px;
+            padding: 20px;
+            background: #f9f9f9;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .checkbox-container:hover {
+            background: #f5f5f5;
+        }
+
+        .custom-checkbox {
+            width: 28px;
+            height: 28px;
+            border: 2px solid #c1c1c1;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        .custom-checkbox.checked {
+            background: #4285f4;
+            border-color: #4285f4;
+        }
+
+        .custom-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .checkbox-label {
+            font-size: 16px;
+            color: #333;
+            user-select: none;
+        }
+
+        .recaptcha-logo {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 11px;
+            color: #999;
+        }
+
         /* Heart dissolve animation */
         .hearts-overlay {
             position: fixed;
@@ -289,6 +353,109 @@
                 transform: translateY(-200px) scale(0.5);
             }
         }
+
+        /* Slideshow styles */
+        .slideshow-container {
+            display: none;
+            position: relative;
+            max-width: 600px;
+            margin: 30px auto;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .slideshow-container.active {
+            display: block;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            animation: slideZoom 0.5s ease-in-out;
+        }
+
+        .slide.active-slide {
+            display: block;
+        }
+
+        .slide img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .slide-text-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+            color: white;
+            padding: 40px 20px 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        @keyframes slideZoom {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .slide-counter {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .photos-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #4285f4;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .photos-link:hover {
+            color: #3367d6;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #4285f4;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            color: #3367d6;
+        }
+
+        .audio-player {
+            margin: 20px auto;
+            max-width: 400px;
+        }
+
+        .audio-player audio {
+            width: 100%;
+            outline: none;
+        }
     </style>
 </head>
 <body>
@@ -302,8 +469,23 @@
     <div class="hearts-overlay" id="hearts-overlay"></div>
 
     <div class="container">
+        <!-- Robot Check Page -->
+        <div id="robot-check" class="robot-check">
+            <h1>Verification</h1>
+            <p class="subtitle">Please verify you're not a robot</p>
+
+            <div class="checkbox-container" id="robot-checkbox">
+                <div class="custom-checkbox" id="checkbox"></div>
+                <div class="checkbox-label">I'm not a robot</div>
+            </div>
+
+            <div class="recaptcha-logo">
+                Protected by reCAPTCHA
+            </div>
+        </div>
+
         <!-- CAPTCHA Page -->
-        <div id="captcha-page">
+        <div id="captcha-page" style="display: none;">
             <h1>Select your Valentine</h1>
             <p class="subtitle">Click verify once you have selected all matching images</p>
 
@@ -354,9 +536,88 @@
             
             <img id="displayed-photo" class="uploaded-photo" alt="Your photo">
             
+            <div class="audio-player">
+                <audio id="valentine-audio" controls loop>
+                    <source src="audio.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+            
             <div class="message-content">
                 <p><strong>To my dearest Valentine</strong></p>
             </div>
+
+            <div class="photos-link" id="show-slideshow">Some photos of us</div>
+
+            <!-- Slideshow -->
+            <div class="slideshow-container" id="slideshow">
+                <div class="slide-counter" id="slide-counter">1 / 20</div>
+                <div class="slide active-slide">
+                    <img src="slide1.JPG" alt="Photo 1">
+                </div>
+                <div class="slide">
+                    <img src="slide2.JPG" alt="Photo 2">
+                </div>
+                <div class="slide">
+                    <img src="slide3.JPG" alt="Photo 3">
+                </div>
+                <div class="slide">
+                    <img src="slide4.JPG" alt="Photo 4">
+                </div>
+                <div class="slide">
+                    <img src="slide5.JPG" alt="Photo 5">
+                </div>
+                <div class="slide">
+                    <img src="slide6.JPG" alt="Photo 6">
+                </div>
+                <div class="slide">
+                    <img src="slide7.JPG" alt="Photo 7">
+                </div>
+                <div class="slide">
+                    <img src="slide8.JPG" alt="Photo 8">
+                </div>
+                <div class="slide">
+                    <img src="slide9.JPG" alt="Photo 9">
+                </div>
+                <div class="slide">
+                    <img src="slide10.JPG" alt="Photo 10">
+                </div>
+                <div class="slide">
+                    <img src="slide11.JPG" alt="Photo 11">
+                </div>
+                <div class="slide">
+                    <img src="slide12.JPG" alt="Photo 12">
+                </div>
+                <div class="slide">
+                    <img src="slide13.JPG" alt="Photo 13">
+                </div>
+                <div class="slide">
+                    <img src="slide14.JPG" alt="Photo 14">
+                </div>
+                <div class="slide">
+                    <img src="slide15.JPG" alt="Photo 15">
+                </div>
+                <div class="slide">
+                    <img src="slide16.JPG" alt="Photo 16">
+                </div>
+                <div class="slide">
+                    <img src="slide17.JPG" alt="Photo 17">
+                </div>
+                <div class="slide">
+                    <img src="slide18.JPG" alt="Photo 18">
+                </div>
+                <div class="slide">
+                    <img src="slide19.JPG" alt="Photo 19">
+                </div>
+                <div class="slide">
+                    <img src="slide20.JPG" alt="Photo 20">
+                    <div class="slide-text-overlay">
+                        Thank you for being my Valentine!!! &lt;33
+                    </div>
+                </div>
+            </div>
+
+            <div class="back-link" id="back-to-message" style="display: none;">← Back to message</div>
         </div>
     </div>
 
@@ -377,11 +638,26 @@
             'photo9.jpg'
         ];
 
-        // Setup captcha on page load
+        // Remove initial loading screen immediately
         window.addEventListener('DOMContentLoaded', function() {
-            // Simulate initial loading (1.5 seconds)
+            document.getElementById('initial-loading').classList.add('hidden');
+        });
+
+        // Handle robot checkbox click
+        document.getElementById('robot-checkbox').addEventListener('click', function() {
+            const checkbox = document.getElementById('checkbox');
+            
+            // Check the box
+            checkbox.classList.add('checked');
+            
+            // Show loading screen
+            document.getElementById('initial-loading').classList.remove('hidden');
+            
+            // After 1.5 seconds, hide robot check and show CAPTCHA
             setTimeout(() => {
                 document.getElementById('initial-loading').classList.add('hidden');
+                document.getElementById('robot-check').classList.add('hidden');
+                document.getElementById('captcha-page').style.display = 'block';
                 setupCaptcha();
             }, 1500);
         });
@@ -457,8 +733,75 @@
                 setTimeout(() => {
                     document.getElementById('message-page').style.display = 'block';
                     document.getElementById('displayed-photo').src = valentinePhoto;
+                    
+                    // Auto-play audio (with a small delay to ensure it works)
+                    setTimeout(() => {
+                        const audio = document.getElementById('valentine-audio');
+                        audio.play().catch(err => {
+                            console.log('Auto-play prevented by browser. User will need to click play.');
+                        });
+                    }, 300);
                 }, 500);
             }, 2000);
+        });
+
+        // Slideshow functionality
+        let currentSlide = 0;
+        let slideshowInterval = null;
+
+        function showSlide(index) {
+            const slides = document.querySelectorAll('.slide');
+            
+            if (index >= slides.length) {
+                currentSlide = 0;
+            } else if (index < 0) {
+                currentSlide = slides.length - 1;
+            } else {
+                currentSlide = index;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active-slide'));
+            slides[currentSlide].classList.add('active-slide');
+
+            // Update counter
+            document.getElementById('slide-counter').textContent = `${currentSlide + 1} / 20`;
+        }
+
+        function startSlideshow() {
+            // Auto-advance every 2 seconds (adjust for more/less cringe)
+            slideshowInterval = setInterval(() => {
+                showSlide(currentSlide + 1);
+            }, 2000);
+        }
+
+        function stopSlideshow() {
+            if (slideshowInterval) {
+                clearInterval(slideshowInterval);
+                slideshowInterval = null;
+            }
+        }
+
+        // Show slideshow when link is clicked
+        document.getElementById('show-slideshow').addEventListener('click', function() {
+            this.style.display = 'none';
+            document.getElementById('displayed-photo').style.display = 'none';
+            document.querySelector('.message-content').style.display = 'none';
+            document.getElementById('slideshow').classList.add('active');
+            document.getElementById('back-to-message').style.display = 'inline-block';
+            
+            currentSlide = 0;
+            showSlide(0);
+            startSlideshow();
+        });
+
+        // Back to message
+        document.getElementById('back-to-message').addEventListener('click', function() {
+            stopSlideshow();
+            this.style.display = 'none';
+            document.getElementById('slideshow').classList.remove('active');
+            document.getElementById('show-slideshow').style.display = 'inline-block';
+            document.getElementById('displayed-photo').style.display = 'block';
+            document.querySelector('.message-content').style.display = 'block';
         });
     </script>
 </body>
